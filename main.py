@@ -1,5 +1,6 @@
 import time
 import random
+import firestore_util
 
 # list of past temperature readings 
 temp_list = []
@@ -30,7 +31,7 @@ def read_temp():
 # post reading to server
 def post_reading(reading):
     print(f"Posting avg reading {reading}")
-
+    firestore_util.set_current_temp(reading)
 
 if __name__ =="__main__":
     read_temp()
