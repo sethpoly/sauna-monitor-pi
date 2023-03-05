@@ -9,8 +9,9 @@ db = firestore.client()
 SENSOR_COLLECTION_ID = "sensors"
 TEMPERATURE_DOC_ID = "temperature"
 
-def set_current_temp(temp):
+def set_current_temp(temp, timestamp):
     doc_ref = db.collection(f'{SENSOR_COLLECTION_ID}').document(f'{TEMPERATURE_DOC_ID}')
     doc_ref.set({
         u'current_temp': temp,
+        u'last_timestamp': timestamp
     })
