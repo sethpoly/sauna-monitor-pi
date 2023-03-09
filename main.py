@@ -1,21 +1,30 @@
 import time
 import random
 import firestore_util
+import os
+import glob
 
 # list of past temperature readings 
 temp_list = []
 sample_count = 6
 
+os.system('modprobe w1-gpio')
+os.system('modprobe w1-therm')
+ 
+base_dir = '/sys/bus/w1/devices/'
+device_folder = glob.glob(base_dir + '28*')[0]
+device_file = device_folder + '/w1_slave'
+
 def average(list):
     return sum(list) / len(list)
 
 # temperature reading loop that posts to server every minute
-def read_temp():
+def start():
     # loop that reads temp on loop
     while(True):
         time.sleep(1)
-        # TODO read sensor here
-        next_temp = random.randrange(50, 220)
+        # read sensor here
+        next_temp = read_temp()
         temp_list.append(next_temp)
         print(f"temp_list = {temp_list}")
 
@@ -35,5 +44,23 @@ def post_reading(reading):
     firestore_util.set_current_temp(reading, timestamp)
     firestore_util.update_logs(reading, timestamp)
 
+def read_temp_raw():
+    f = open(device_file, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+ 
+def read_temp():
+    lines = read_temp_raw()
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = read_temp_raw()
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos+2:]
+        temp_c = float(temp_string) / 1000
+        temp_f = temp_c * 9.0 / 5.0 + 32.0
+        return temp_f
+
 if __name__ =="__main__":
-    read_temp()
+    start()
