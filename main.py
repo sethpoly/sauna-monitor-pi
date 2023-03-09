@@ -6,7 +6,7 @@ import glob
 
 # list of past temperature readings 
 temp_list = []
-sample_count = 6
+sample_count = 30
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
