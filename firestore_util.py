@@ -15,3 +15,11 @@ def set_current_temp(temp, timestamp):
         u'current_temp': temp,
         u'last_timestamp': timestamp
     })
+
+def update_logs(temp, timestamp):
+    doc_ref = db.collection(f'{SENSOR_COLLECTION_ID}').document(f'{TEMPERATURE_DOC_ID}')
+    doc_ref.update({
+        u'past_logs': {
+            u'foo': temp
+        }
+    })

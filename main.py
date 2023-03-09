@@ -31,7 +31,9 @@ def read_temp():
 # post reading to server
 def post_reading(reading):
     print(f"Posting avg reading {reading}")
-    firestore_util.set_current_temp(reading, time.time())
+    timestamp = time.time()
+    firestore_util.set_current_temp(reading, timestamp)
+    firestore_util.update_logs(reading, timestamp)
 
 if __name__ =="__main__":
     read_temp()
