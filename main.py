@@ -26,20 +26,17 @@ def start():
         # read sensor here
         next_temp = read_temp()
         temp_list.append(next_temp)
-        print(f"temp_list = {temp_list}")
 
         # get average and post reading, then clear list for next reading sample
         if len(temp_list) >= sample_count:
             avg_temp = average(temp_list)
             post_reading(avg_temp)
 
-            print("Dropping all elements from list")
             temp_list.clear()
             
 
 # post reading to server
 def post_reading(reading):
-    print(f"Posting avg reading {reading}")
     timestamp = time.time()
     firestore_util.set_current_temp(reading, timestamp)
     firestore_util.update_logs(reading, timestamp)
